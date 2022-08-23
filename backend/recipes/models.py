@@ -6,8 +6,8 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    name = models.CharField('Название тэга', unique=True, max_length=200)
-    slug = models.SlugField('Адрес тэга', unique=True, max_length=200)
+    name = models.CharField('Название тэга', unique=True, max_length=20)
+    slug = models.SlugField('Адрес тэга', unique=True, max_length=20)
     color = models.CharField(
         'Цвет(HEX)', unique=True, max_length=7, default='#49B64E'
     )
@@ -18,12 +18,12 @@ class Tag(models.Model):
         ordering = ('id',)
 
     def __str__(self):
-        return f'{self.name}'
+        return self.name
 
 
 class Ingredient(models.Model):
     name = models.CharField('Название ингредиента', max_length=200)
-    measurement_unit = models.CharField('Еденицы измерения', max_length=200)
+    measurement_unit = models.CharField('Еденицы измерения', max_length=20)
 
     class Meta:
         verbose_name = 'Ингредиент'

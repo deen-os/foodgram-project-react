@@ -152,7 +152,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        ingredients = validated_data.pop("ingredients", None)
+        ingredients = validated_data.pop('ingredients', None)
         tags = validated_data.pop('tags', None)
         instance = super().update(instance, validated_data)
         if tags:

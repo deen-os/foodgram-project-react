@@ -35,8 +35,7 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if self.username == 'me':
             return ValidationError('Username не может быть "me".')
-        else:
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def is_admin(self):
