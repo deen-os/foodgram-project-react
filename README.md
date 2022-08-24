@@ -10,7 +10,7 @@
 а перед походом в магазин скачивать сводный список продуктов, 
 необходимых для приготовления одного или нескольких выбранных блюд.
 
-### Установка
+### Запуск проекта на Docker Desktop
 
 Скопируйте проект на свой компьютер:
 
@@ -64,40 +64,41 @@ DB_PORT=5432
 DEBUG=False
 ```
 
-Запустите проект:
+Создайте образ backend (текущая директория должна быть backend):
 
 ```
-python3 manage.py runserver
+docker build -t dimlar/foodgram_backend:latest .
 ```
 
-### Примеры
-
-Зарегистрируйте пользователя.  
-Отправьте POST запрос на URL:
+Перейдите в директорию infra:
 
 ```
-http://127.0.0.1:8000/api/users/
+cd ../infra
 ```
 
-Получите токен.  
-Отправьте POST запрос на URL:
+Запустите docker-compose:
 
 ```
-http://127.0.0.1:8000/api/auth/token/login/
+docker-compose up
 ```
 
-Получите сприсок рецептов.
-Отправьте GET запрос на URL:
+Выполните миграции в контейнере созданном из образа backend:
 
 ```
-http://127.0.0.1:8000/api/recipes/
+docker-compose exec -T backend python manage.py migrate
 ```
 
-Создайте свой рецепт.
-Отправьте Post запрос на URL:
+Загрузите статические файлы в контейнере созданном из образа backend:
 
 ```
-http://127.0.0.1:8000/api/recipes/
+docker-compose exec -T backend python manage.py collectstatic --no-input
+```
+
+Запустите проект в браузере.
+Введите в адресную строку браузера:
+
+```
+localhost
 ```
 
 #### В проекте использованы технологии:

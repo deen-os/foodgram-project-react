@@ -10,6 +10,18 @@ from .models import User, Follow
 
 
 class UserSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
+    def get_is_subscribed(self, obj):
+        if (
+            'request' not in self.context or
+            self.context['request'].user.is_anonymous
+        ):
+            return False
+        return Follow.objects.filter(
+            author=obj, user=self.context['request'].user
+        ).exists()
+
     def validate(self, data):
         user = User(**data)
         password = data.get('password')
@@ -35,6 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'password',
+            'is_subscribed'
         )
         extra_kwargs = {'password': {'write_only': True}}
 

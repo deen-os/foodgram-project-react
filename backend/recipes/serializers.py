@@ -142,12 +142,16 @@ class RecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('нужен хотя бы один тег')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
-        for ingredient in ingredients:
-            IngredientRecipe.objects.get_or_create(
+        print(ingredients)
+        ingredients_list = [
+            IngredientRecipe(
                 recipe=recipe,
                 ingredient=ingredient.get('id'),
                 amount=ingredient.get('amount')
             )
+            for ingredient in ingredients
+        ]
+        IngredientRecipe.objects.bulk_create(ingredients_list)
         return recipe
 
     @transaction.atomic
@@ -159,12 +163,15 @@ class RecipeSerializer(serializers.ModelSerializer):
             instance.tags.set(tags)
         if ingredients:
             instance.ingredients.clear()
-            for ingredient in ingredients:
-                IngredientRecipe.objects.get_or_create(
+            ingredients_list = [
+                IngredientRecipe(
                     recipe=instance,
                     ingredient=ingredient.get('id'),
                     amount=ingredient.get('amount')
                 )
+                for ingredient in ingredients
+            ]
+            IngredientRecipe.objects.bulk_create(ingredients_list)
         return instance
 
     def validate(self, data):

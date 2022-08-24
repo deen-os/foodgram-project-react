@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import permissions, status
+from rest_framework import permissions, status, generics
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -8,21 +8,17 @@ from .models import User, Follow
 from .serializers import FollowListSerializer, FollowCreateSerializer
 
 
-class SubscriptionsViewSet(viewsets.ModelViewSet):
+class SubscriptionsView(generics.ListAPIView):
+    queryset = User.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FollowListSerializer
 
-    @action(
-        detail=False,
-        permission_classes=[permissions.IsAuthenticated],
-        methods=['GET']
-    )
-    def subscriptions(self, request):
-        user = request.user
-        authors = User.objects.filter(following__user=user)
-        page = self.paginate_queryset(authors)
-        serializer = FollowListSerializer(
-            page, many=True, context={'request': request}
-        )
-        return self.get_paginated_response(serializer.data)
+    def get_queryset(self):
+        user = self.request.user
+        return User.objects.filter(following__user=user)
+
+
+class SubscriptionsViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
@@ -45,7 +41,7 @@ class SubscriptionsViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
-    def delete_subscribe(self, request, **kwargs):
+    def unsubscribe(self, request, **kwargs):
         id = kwargs.get('pk')
         user = self.request.user
         author = get_object_or_404(User, id=id)

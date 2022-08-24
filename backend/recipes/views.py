@@ -14,7 +14,7 @@ from .serializers import (
     IngredientSerializer, TagSerializer, RecipeSerializer,
     FollowRecipeSerializer
 )
-from .utils import ShoppingCartDownload
+from .utils import download_pdf
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -70,7 +70,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     @action(
-        methods=['post', 'delete'],
+        methods=['POST', 'DELETE'],
         detail=True,
         permission_classes=[rest_framework.permissions.IsAuthenticated]
     )
@@ -81,7 +81,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         })
 
     @action(
-        methods=['post', 'delete'],
+        methods=['POST', 'DELETE'],
         detail=True,
         permission_classes=[rest_framework.permissions.IsAuthenticated]
     )
@@ -92,22 +92,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
         })
 
     @action(
-        methods=['get'],
+        methods=['GET'],
         detail=False,
         permission_classes=[rest_framework.permissions.IsAuthenticated]
     )
     def download_shopping_cart(self, request):
-        ingredient_list = (
+        ingredients_obj = (
             IngredientRecipe.objects.filter(recipe__carts__user=request.user)
             .values('ingredient__name', 'ingredient__measurement_unit')
             .annotate(sum_amount=Sum('amount'))
         )
-        shopping_cart_dict = {
-            'ing_list': ingredient_list,
-            'content': '',
-            'ing_name': 'ingredient__name',
-            'ing_meas_unit': 'ingredient__measurement_unit',
-            'sum_amount': 'sum_amount',
-        }
-        to_buy = ShoppingCartDownload(**shopping_cart_dict)
-        return to_buy.download()
+        data_dict = {}
+        ingredients_list = []
+        for item in ingredients_obj:
+            name = item['ingredient__name'].capitalize()
+            unit = item['ingredient__measurement_unit']
+            sum_amount = item['sum_amount']
+            data_dict[name] = [sum_amount, unit]
+        for ind, (key, value) in enumerate(data_dict.items(), 1):
+            if ind < 10:
+                ind = '0' + str(ind)
+            ingredients_list.append(
+                f'{ind}. {key} - ' f'{value[0]} ' f'{value[1]}'
+            )
+        return download_pdf(ingredients_list)
