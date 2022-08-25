@@ -36,8 +36,8 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          cd infra
-          sudo docker compose stop
+          cd foodgram/infra
+          echo ${{ secrets.USER_PASSWORD }} | sudo -S docker compose stop
           sudo docker compose rm -f backend
           sudo docker image rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
           rm .env
@@ -50,9 +50,12 @@ jobs:
           echo DB_HOST=${{ secrets.DB_HOST }} >> .env
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           echo DEBUG=${{ secrets.DEBUG }} >> .env
-          sudo docker compose up -d
-          sudo docker compose exec -it backend python manage.py collectstatic --no-input
-          sudo docker compose exec -it backend python manage.py migrate
+          echo ${{ secrets.USER_PASSWORD }} |
+          sudo -S docker compose up -d
+          echo ${{ secrets.USER_PASSWORD }} |
+          sudo -S docker compose exec -it backend python manage.py collectstatic --no-input
+          echo ${{ secrets.USER_PASSWORD }} |
+          sudo -S docker compose exec -it backend python manage.py migrate
 
   send_message:
     runs-on: ubuntu-latest

@@ -13,29 +13,14 @@ class UserAdmin(admin.ModelAdmin):
     list_display_links = ('username',)
     search_fields = ('username',)
     fieldsets = (
-        (None, {
-            'fields': (
-                'username', 'first_name', 'last_name', 'email', 'password'
-            )
-               }
-         ),
+        (None, {'fields': ('username', 'first_name', 'last_name', 'email')}),
         ('Права', {'fields':  ('is_staff', 'is_active')})
     )
     add_fieldsets = (
-        (
-            None, {
-                'fields': (
-                    'username',
-                    'first_name',
-                    'last_name',
-                    'email',
-                    'password1',
-                    'password2',
-                    'is_staff',
-                    'is_active'
-                )
-            }
-        )
+        (None, {'fields': (
+                    'username', 'first_name', 'last_name', 'email',
+                    'password1', 'password2', 'is_staff', 'is_active'
+        )})
     )
 
 
