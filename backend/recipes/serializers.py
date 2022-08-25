@@ -142,7 +142,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('нужен хотя бы один тег')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
-        print(ingredients)
         ingredients_list = [
             IngredientRecipe(
                 recipe=recipe,

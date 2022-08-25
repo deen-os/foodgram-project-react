@@ -1,6 +1,15 @@
+![workflow](https://github.com/LariosDeen/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?)
+
 ### foodgram-project-react
 
 # Дипломный проект курса "Бэкенд Разработчик" (Яндекс Практикум)
+
+Server IP:  
+[62.84.127.195](http://62.84.127.195/)
+
+Админка  
+login: deen@deen.ru  
+pass: deen
 
 ### Описание
 
@@ -36,12 +45,6 @@ python3 -m pip install --upgrade pip
 
 ```
 pip install -r requirements.txt
-```
-
-Выполните миграции:
-
-```
-python3 manage.py migrate
 ```
 
 Перейдите в директорию проекта:
