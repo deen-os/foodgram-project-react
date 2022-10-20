@@ -31,7 +31,8 @@ class Ingredient(models.Model):
         ordering = ('name',)
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'measurement_unit'], name='unique_ingredient'
+                fields=['name', 'measurement_unit'],
+                name='unique_ingredient'
             )
         ]
 
@@ -57,7 +58,9 @@ class Recipe(models.Model):
         through='IngredientRecipe',
     )
     tags = models.ManyToManyField(
-        Tag, verbose_name='Теги', related_name='recipes'
+        Tag,
+        verbose_name='Теги',
+        related_name='recipes'
     )
     cooking_time = models.PositiveIntegerField(
         'Время приготовления',
@@ -68,7 +71,8 @@ class Recipe(models.Model):
         ),
     )
     pub_date = models.DateTimeField(
-        verbose_name='Дата публикации', auto_now_add=True
+        verbose_name='Дата публикации',
+        auto_now_add=True
     )
 
     class Meta:
@@ -130,7 +134,8 @@ class Favorite(models.Model):
         verbose_name_plural = 'Избранные'
         constraints = (
             models.UniqueConstraint(
-                fields=('user', 'recipe'), name='uniq_favorite_user_recipe'
+                fields=('user', 'recipe'),
+                name='uniq_favorite_user_recipe'
             ),
         )
 
@@ -146,7 +151,9 @@ class ShoppingCart(models.Model):
         verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='carts',
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='carts',
         verbose_name='Рецепт'
     )
 
@@ -155,6 +162,7 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Корзина'
         constraints = [
             models.UniqueConstraint(
-                fields=('user', 'recipe'), name='uniq_cart_user_recipe'
+                fields=('user', 'recipe'),
+                name='uniq_cart_user_recipe'
             )
         ]
